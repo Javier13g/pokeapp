@@ -1,0 +1,178 @@
+html,
+body {
+  background-color: #21232a;
+  color: white;
+  font-family: "Helvetica Neue", Arial, Helvetica, sans-serif;
+  font-size: 1.3rem;
+  padding: auto;
+  text-align: center;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  //justify-content: center;
+  max-width: 1600px;
+  padding: 0 15px;
+  margin: 0 auto;
+}
+
+/*INPUT SEARCH CSS*/
+input {
+  border-style: none;
+  background: transparent;
+  outline: none;
+}
+
+$input-background: rgba(57, 63, 84, 0.8);
+$input-text-inactive: #7881a1;
+$input-text-active: #bfd2ff;
+
+// gradient animation
+@keyframes gradient {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 100% 0;
+  }
+}
+
+.webflow-style-input {
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  max-width: 500px;
+  margin: 0 auto;
+  height: 30px;
+  border-radius: 2px;
+  padding: 1.4rem 2rem 1.6rem;
+  background: $input-background;
+  &:after {
+    content: "";
+    position: absolute;
+    left: 0px;
+    right: 0px;
+    bottom: 0px;
+    z-index: 999;
+    height: 2px;
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+    background-position: 0% 0%;
+    background: linear-gradient(
+      to right,
+      #b294ff,
+      #57e6e6,
+      #feffb8,
+      #57e6e6,
+      #b294ff,
+      #57e6e6
+    );
+    background-size: 500% auto;
+    animation: gradient 3s linear infinite;
+  }
+}
+
+.webflow-style-input input {
+  flex-grow: 1;
+  color: $input-text-active;
+  font-size: 1.5rem;
+  line-height: 2.4rem;
+  vertical-align: middle;
+  &::-webkit-input-placeholder {
+    color: $input-text-inactive;
+  }
+}
+
+//CARD POKEMON
+#container {
+  width: 350px;
+  position: absolute;
+  transform: translate(-50%, -50%);
+  top: 50%;
+  left: 50%;
+  margin-top: 120px;
+}
+#card {
+  position: relative;
+  width: 100%;
+  padding: 30px 20px;
+  box-shadow: 0 20px 30px rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+  background-color: #001D3D;
+}
+#card img {
+  display: block;
+  width: 180px;
+  max-height: 200px;
+  position: relative;
+  margin: 20px auto;
+}
+.hp {
+  width: 105px;
+  background-color: red;
+  text-align: center;
+  padding: 8px 0;
+  border-radius: 30px;
+  margin-left: auto;
+  font-weight: 400;
+}
+.poke-name {
+  text-align: center;
+  font-weight: 600;
+}
+.types {
+  display: flex;
+  justify-content: space-around;
+  margin: 20px 0 40px 0;
+}
+.hp span,
+.types span {
+  font-size: 20px;
+  letter-spacing: 0.4px;
+  font-weight: 600;
+}
+.types span {
+  padding: 5px 20px;
+  border-radius: 20px;
+  color: #ffffff;
+}
+.stats {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  text-align: center;
+}
+.stats p {
+  color: #404060;
+}
+
+// Media query para dispositivos móviles
+@media (max-width: 768px) {
+  body {
+    font-size: 1rem; // Ajusta el tamaño de fuente para dispositivos móviles
+  }
+
+  .container {
+    padding: 0 5px; // Reduce el espacio horizontal en dispositivos móviles
+  }
+
+  .webflow-style-input {
+    max-width: 70%; // Hace que el input sea 100% de ancho en dispositivos móviles
+  }
+
+ .webflow-style-input input {
+    font-size: 17px; // Ajusta el tamaño de fuente del input en dispositivos móviles
+    padding: 0px; // Ajusta el espacio dentro del input en dispositivos móviles
+  }
+
+  #container {
+    width: 100%; // Hace que el contenedor sea 100% de ancho en dispositivos móviles
+    margin-top: 130px; // Ajusta el margen superior en dispositivos móviles
+  }
+
+  #card {
+    padding: 20px 10px; // Ajusta el padding en dispositivos móviles
+  }
+}

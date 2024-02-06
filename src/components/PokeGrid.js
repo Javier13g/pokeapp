@@ -34,8 +34,18 @@ export const PokeGrid = ({ Pokemon }) => {
         const resp = await fetch(url);
         
         if(!resp.ok) {
-            setError(true);
-            alert(`Error en la solicitud: Código de estado ${resp.status}`);
+            const notify = () => toast.error(` Error ${resp.status}!, pokemon not found `, {
+                position: "top-right",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            notify();
+            //alert(`Error en la solicitud: Código de estado ${resp.status}`);
             return;
         } else {
             const data = await resp.json();

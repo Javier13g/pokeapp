@@ -7,6 +7,7 @@ export const PokeGrid = ({ Pokemon }) => {
     const [error, setError] = useState(false);
     useEffect(() => {
         getDataPoke();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
 
     const typeColor = {
@@ -27,13 +28,13 @@ export const PokeGrid = ({ Pokemon }) => {
         rock: "#2d3436",
         water: "#0190FF",
         dark: "#21232a"
-      };
+    };
 
     const getDataPoke = async () => {
         const url = `https://pokeapi.co/api/v2/pokemon/${Pokemon.toLowerCase()}`;
         const resp = await fetch(url);
-        
-        if(!resp.ok) {
+
+        if (!resp.ok) {
             const notify = () => toast.error(` Error ${resp.status}!, pokemon not found `, {
                 position: "top-right",
                 autoClose: 10000,
@@ -45,6 +46,7 @@ export const PokeGrid = ({ Pokemon }) => {
                 theme: "dark",
             });
             notify();
+            setError(true)
             //alert(`Error en la solicitud: Código de estado ${resp.status}`);
             return;
         } else {
@@ -65,6 +67,7 @@ export const PokeGrid = ({ Pokemon }) => {
             }
             //alert('se pudo')
             await setData(dataPoke)
+            setError(false)
             const notify = () => toast.success(`${data.name} has been captured!`, {
                 position: "top-right",
                 autoClose: 10000,
@@ -78,57 +81,70 @@ export const PokeGrid = ({ Pokemon }) => {
             notify();
         }
     }
-    
+
     if (error) {
-        return null;
+        return (<>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
+        </>);
     }
 
 
     return (
         <>
-        <ToastContainer
-            position="top-right"
-            autoClose={5000}
-            hideProgressBar={false}
-            newestOnTop={false}
-            closeOnClick
-            rtl={false}
-            pauseOnFocusLoss
-            draggable
-            pauseOnHover
-            theme="dark"
-        />
-        <div id="container">
-            <div id="card">
-                {/* <h3> {Pokemon}</h3>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="dark"
+            />
+            <div id="container">
+                <div id="card">
+                    {/* <h3> {Pokemon}</h3>
             <img src={dataP.img} /> */}
 
-                <p className="hp">
-                    <span>HP: </span>
-                    {dataP.hp}
-                </p>
-                <img src={dataP.img} />
-                <h2 className="poke-name">{Pokemon}</h2>
-                <div className="types">
-                    <span style={{backgroundColor: dataP.typeColor}}>{dataP.type}</span>
-                    {dataP.type2 && <span style={{backgroundColor: dataP.typeColor2}}>{dataP.type2}</span>}
+                    <p className="hp">
+                        <span>HP: </span>
+                        {dataP.hp}
+                    </p>
+                    <img src={dataP.img} alt={`Imagen de ${Pokemon}`}/>
+                    <h2 className="poke-name">{Pokemon}</h2>
+                    <div className="types">
+                        <span style={{ backgroundColor: dataP.typeColor }}>{dataP.type}</span>
+                        {dataP.type2 && <span style={{ backgroundColor: dataP.typeColor2 }}>{dataP.type2}</span>}
+                    </div>
+                    <div className="stats">
+                        <div>
+                            <h3>{dataP.attack}</h3>
+                            <p>Attack</p>
+                        </div>
+                        <div>
+                            <h3>{dataP.defense}</h3>
+                            <p>Defense</p>
+                        </div>
+                        <div>
+                            <h3>{dataP.speed}</h3>
+                            <p>Speed</p>
+                        </div>
+                    </div>
                 </div>
-                <div className="stats">
-                    <div>
-                        <h3>{dataP.attack}</h3>
-                        <p>Attack</p>
-                    </div>
-                    <div>
-                        <h3>{dataP.defense}</h3>
-                        <p>Defense</p>
-                    </div>
-                    <div>
-                        <h3>{dataP.speed}</h3>
-                        <p>Speed</p>
-                    </div>
-                </div>
-        </div>
-        </div>
+            </div>
         </>
     )
 }

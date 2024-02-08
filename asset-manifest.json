@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/pokeapp/static/css/main.b0f8f7b3.css",
-    "main.js": "/pokeapp/static/js/main.376d9c3c.js",
+    "main.css": "/pokeapp/static/css/main.3b4540a3.css",
+    "main.js": "/pokeapp/static/js/main.6c72c80a.js",
     "index.html": "/pokeapp/index.html",
-    "main.b0f8f7b3.css.map": "/pokeapp/static/css/main.b0f8f7b3.css.map",
-    "main.376d9c3c.js.map": "/pokeapp/static/js/main.376d9c3c.js.map"
+    "main.3b4540a3.css.map": "/pokeapp/static/css/main.3b4540a3.css.map",
+    "main.6c72c80a.js.map": "/pokeapp/static/js/main.6c72c80a.js.map"
   },
   "entrypoints": [
-    "static/css/main.b0f8f7b3.css",
-    "static/js/main.376d9c3c.js"
+    "static/css/main.3b4540a3.css",
+    "static/js/main.6c72c80a.js"
   ]
 }

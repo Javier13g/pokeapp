@@ -1,14 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { ToastContainer, toast } from 'react-toastify';
+import React, {useEffect, useState} from "react";
+import {ToastContainer, toast} from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-export const PokeGrid = ({ Pokemon }) => {
+export const PokeGrid = ({Pokemon}) => {
     const [dataP, setData] = useState([]);
+    const [DataWeaknessesAndStrengths, setDataWeaknessesAndStrengths] = useState([]);
     const [error, setError] = useState(false);
+    const [showMoreInfo, setShowMoreInfo] = useState(false);
+    const [isFlipped, setIsFlipped] = useState(false);
     useEffect(() => {
         getDataPoke();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [])
+
+    useEffect(() => {
+        WeaknessesAndStrengths(dataP);
+    }, [dataP])
+
+    //console.log("DataWeaknessesAndStrengths", DataWeaknessesAndStrengths)
+
+    const handleToggleInfo = () => {
+        setShowMoreInfo(!showMoreInfo); // Cambiar el estado
+    };
+
+    const handleCardFlip = () => {
+        setIsFlipped(!isFlipped);
+    };
 
     const typeColor = {
         bug: "#26de81",
@@ -27,7 +44,8 @@ export const PokeGrid = ({ Pokemon }) => {
         psychic: "#a29bfe",
         rock: "#2d3436",
         water: "#0190FF",
-        dark: "#21232a"
+        dark: "#21232a",
+        steel: "#e3e4e5"
     };
 
     const getDataPoke = async () => {
@@ -47,7 +65,6 @@ export const PokeGrid = ({ Pokemon }) => {
             });
             notify();
             setError(true)
-            //alert(`Error en la solicitud: Código de estado ${resp.status}`);
             return;
         } else {
             const data = await resp.json();
@@ -80,6 +97,35 @@ export const PokeGrid = ({ Pokemon }) => {
             });
             notify();
         }
+    }
+
+    async function WeaknessesAndStrengths(pokemonData) {
+        const {type} = pokemonData
+        const url = `https://pokeapi.co/api/v2/type/${type}`;
+        const resp = await fetch(url);
+        const data = await resp.json();
+        const {damage_relations} = data ?? {};
+        const {double_damage_from} = damage_relations ?? {};
+        const {double_damage_to} = damage_relations ?? {};
+        const {half_damage_from} = damage_relations ?? {};
+        const {half_damage_to} = damage_relations ?? {};
+        const {no_damage_from} = damage_relations ?? {};
+        const {no_damage_to} = damage_relations ?? {};
+        /*console.log("double_damage_from: ", damage_relations);
+        console.log("Vulnerable: ", double_damage_from);
+        console.log("Eficaz contra: ", double_damage_to);
+        console.log("Normal contra: ", half_damage_from);
+        console.log("Muy Debil contra: ", half_damage_to);*/
+
+        let dataWeaknessesAndStrengths = {
+            doubleDamageFrom: double_damage_from,
+            doubleDamageTo: double_damage_to,
+            halfDamageFrom: half_damage_from,
+            halfDamageTo: half_damage_to,
+            noDamageFrom: no_damage_from,
+            noDamageTo: no_damage_to
+        }
+        setDataWeaknessesAndStrengths(dataWeaknessesAndStrengths);
     }
 
     if (error) {
@@ -115,34 +161,129 @@ export const PokeGrid = ({ Pokemon }) => {
                 theme="dark"
             />
             <div id="container">
-                <div id="card">
-                    {/* <h3> {Pokemon}</h3>
-            <img src={dataP.img} /> */}
+                <div id="card" className={isFlipped ? 'flipped' : ''} onClick={handleCardFlip}>
+                    {!isFlipped && (
+                        <div className="card-front">
+                            <p className="hp">
+                                <span>HP: </span>
+                                {dataP.hp}
+                            </p>
+                            <img src={dataP.img} alt={`Imagen de ${Pokemon}`}/>
+                            <h2 className="poke-name">{Pokemon}</h2>
+                            <div className="types">
+                                <span style={{backgroundColor: dataP.typeColor}}>{dataP.type}</span>
+                                {dataP.type2 && <span style={{backgroundColor: dataP.typeColor2}}>{dataP.type2}</span>}
+                            </div>
+                            <div className="stats">
+                                <div>
+                                    <h3>{dataP.attack}</h3>
+                                    <p>Attack</p>
+                                </div>
+                                <div>
+                                    <h3>{dataP.defense}</h3>
+                                    <p>Defense</p>
+                                </div>
+                                <div>
+                                    <h3>{dataP.speed}</h3>
+                                    <p>Speed</p>
+                                </div>
+                            </div>
+                        </div>)}
+                    {isFlipped && (
+                        <div className="card-back">
+                            <div>
+                                <h5>Double damage from:</h5>
+                                <span>
+                                   {DataWeaknessesAndStrengths.doubleDamageFrom.map((type, index) => (
+                                       <span key={type.name}>
+                                  {index > 0 && ' '}
+                                           <span style={{ backgroundColor: typeColor[type.name.toLowerCase()],
+                                               borderRadius: "20px", padding: "5px 20px", display: "inline-block",
+                                               marginBottom: "5px"}}>
+                                     {type.name}
+                                  </span>
+                                </span>
+                                   ))}
+                              </span>
+                            </div>
+                            <div>
+                                <h5>Double damage to:</h5>
+                                <span>
+                                   {DataWeaknessesAndStrengths.doubleDamageTo.map((type, index) => (
+                                       <span key={type.name}>
+                                  {index > 0 && ' '}
+                                           <span style={{ backgroundColor: typeColor[type.name.toLowerCase()],
+                                               borderRadius: "20px", padding: "5px 20px", display: "inline-block",
+                                               marginBottom: "5px"}}>
+                                     {type.name}
+                                  </span>
+                                </span>
+                                   ))}
+                              </span>
+                            </div>
+                            <div>
+                                <h5>Half damage from:</h5>
+                                <span>
+                                   {DataWeaknessesAndStrengths.halfDamageFrom.map((type, index) => (
+                                       <span key={type.name}>
+                                  {index > 0 && ' '}
+                                           <span style={{ backgroundColor: typeColor[type.name.toLowerCase()],
+                                               borderRadius: "20px", padding: "5px 20px", display: "inline-block",
+                                               marginBottom: "5px"}}>
+                                     {type.name}
+                                  </span>
+                                </span>
+                                   ))}
+                              </span>
+                            </div>
+                            <div>
+                                <h5>Half damage to:</h5>
+                                <span>
+                                   {DataWeaknessesAndStrengths.halfDamageTo.map((type, index) => (
+                                       <span key={type.name}>
+                                  {index > 0 && ' '}
+                                           <span style={{ backgroundColor: typeColor[type.name.toLowerCase()],
+                                               borderRadius: "20px", padding: "5px 20px", display: "inline-block",
+                                               marginBottom: "5px"}}>
+                                     {type.name}
+                                  </span>
+                                </span>
+                                   ))}
+                              </span>
+                            </div>
+                            <div>
+                                <h5>No damage from:</h5>
+                                <span>
+                                   {DataWeaknessesAndStrengths.noDamageFrom.map((type, index) => (
+                                       <span key={type.name}>
+                                  {index > 0 && ' '}
+                                           <span style={{ backgroundColor: typeColor[type.name.toLowerCase()],
+                                               borderRadius: "20px", padding: "5px 20px", display: "inline-block",
+                                               marginBottom: "5px"}}>
+                                     {type.name}
+                                  </span>
+                                </span>
+                                   ))}
+                              </span>
+                            </div>
 
-                    <p className="hp">
-                        <span>HP: </span>
-                        {dataP.hp}
-                    </p>
-                    <img src={dataP.img} alt={`Imagen de ${Pokemon}`}/>
-                    <h2 className="poke-name">{Pokemon}</h2>
-                    <div className="types">
-                        <span style={{ backgroundColor: dataP.typeColor }}>{dataP.type}</span>
-                        {dataP.type2 && <span style={{ backgroundColor: dataP.typeColor2 }}>{dataP.type2}</span>}
-                    </div>
-                    <div className="stats">
-                        <div>
-                            <h3>{dataP.attack}</h3>
-                            <p>Attack</p>
+                            <div>
+                                <h5>No damage to:</h5>
+                                <span>
+                                   {DataWeaknessesAndStrengths.noDamageTo.map((type, index) => (
+                                <span key={type.name}>
+                                  {index > 0 && ', '}
+                                   <span style={{ backgroundColor: typeColor[type.name.toLowerCase()],
+                                       borderRadius: "20px", padding: "5px 20px"}}>
+                                     {type.name}
+                                  </span>
+                                </span>
+                                  ))}
+                              </span>
+                            </div>
+
                         </div>
-                        <div>
-                            <h3>{dataP.defense}</h3>
-                            <p>Defense</p>
-                        </div>
-                        <div>
-                            <h3>{dataP.speed}</h3>
-                            <p>Speed</p>
-                        </div>
-                    </div>
+                    )}
                 </div>
             </div>
         </>

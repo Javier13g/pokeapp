@@ -49,11 +49,18 @@ export const PokeGrid = ({Pokemon}) => {
     };
 
     const getDataPoke = async () => {
-        const url = `https://pokeapi.co/api/v2/pokemon/${Pokemon.toLowerCase()}`;
-        const resp = await fetch(url);
+        const urlMain = `https://pokeapi.co/api/v2/pokemon-species/${Pokemon.toLowerCase()}`;
+        const respMain = await fetch(urlMain);
+        const dataMain = await respMain.json();
+        const { varieties } = dataMain
 
-        if (!resp.ok) {
-            const notify = () => toast.error(` Error ${resp.status}!, pokemon not found `, {
+        const urlDataPokeMain = varieties[0].pokemon.url;
+        const respDataPokeMain = await fetch(urlDataPokeMain);
+        const dataPokeMain = await respDataPokeMain.json();
+
+
+        if (!respDataPokeMain.ok) {
+            const notify = () => toast.error(` Error ${respDataPokeMain.status}!, pokemon not found `, {
                 position: "top-right",
                 autoClose: 10000,
                 hideProgressBar: false,
@@ -67,25 +74,26 @@ export const PokeGrid = ({Pokemon}) => {
             setError(true)
             return;
         } else {
-            const data = await resp.json();
-            //console.log('data', data)
+            //const data = await resp.json();
+            console.log('', dataPokeMain)
             let dataPoke = {
-                id: data.id,
-                name: data.name,
-                img: (data.sprites.other.dream_world.front_default == null) ? data.sprites.other.home.front_default : data.sprites.other.dream_world.front_default,
-                hp: data.stats[0].base_stat,
-                attack: data.stats[1].base_stat,
-                defense: data.stats[2].base_stat,
-                speed: data.stats[5].base_stat,
-                type: data.types[0].type.name,
-                type2: (data.types[1] && data.types[1].type.name) ? data.types[1].type.name : null,
-                typeColor: typeColor[data.types[0].type.name],
-                typeColor2: (data.types[1] && data.types[1].type.name) ? typeColor[data.types[1].type.name] : null
+                id: dataPokeMain.id,
+                name: dataPokeMain.name,
+                //img: (dataPokeMain.sprites.other.dream_world.front_default == null) ? dataPokeMain.sprites.other.home.front_default : dataPokeMain.sprites.other.dream_world.front_default,
+                img: (dataPokeMain.sprites.other.showdown.front_default == null) ? dataPokeMain.sprites.other.home.front_default : dataPokeMain.sprites.other.showdown.front_default,
+                hp: dataPokeMain.stats[0].base_stat,
+                attack: dataPokeMain.stats[1].base_stat,
+                defense: dataPokeMain.stats[2].base_stat,
+                speed: dataPokeMain.stats[5].base_stat,
+                type: dataPokeMain.types[0].type.name,
+                type2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? dataPokeMain.types[1].type.name : null,
+                typeColor: typeColor[dataPokeMain.types[0].type.name],
+                typeColor2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? typeColor[dataPokeMain.types[1].type.name] : null
             }
             //alert('se pudo')
             await setData(dataPoke)
             setError(false)
-            const notify = () => toast.success(`${data.name} has been captured!`, {
+            const notify = () => toast.success(`${dataPokeMain.name} has been captured!`, {
                 position: "top-right",
                 autoClose: 10000,
                 hideProgressBar: false,

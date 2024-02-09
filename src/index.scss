@@ -191,10 +191,12 @@ $input-text-active: #bfd2ff;
 
   #container {
     width: 80%; // Hace que el contenedor sea 100% de ancho en dispositivos móviles
-    margin-top: 130px; // Ajusta el margen superior en dispositivos móviles
+    margin-top: 150px; // Ajusta el margen superior en dispositivos móviles
+    height: 80%;
+    margin-bottom: 150px;
   }
 
   #card {
-    padding: 20px 10px; // Ajusta el padding en dispositivos móviles
+    padding: 20px 0px;
   }
 }

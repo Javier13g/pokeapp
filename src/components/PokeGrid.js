@@ -6,7 +6,6 @@ export const PokeGrid = ({Pokemon}) => {
     const [dataP, setData] = useState([]);
     const [DataWeaknessesAndStrengths, setDataWeaknessesAndStrengths] = useState([]);
     const [error, setError] = useState(false);
-    const [showMoreInfo, setShowMoreInfo] = useState(false);
     const [isFlipped, setIsFlipped] = useState(false);
     useEffect(() => {
         getDataPoke();
@@ -16,12 +15,6 @@ export const PokeGrid = ({Pokemon}) => {
     useEffect(() => {
         WeaknessesAndStrengths(dataP);
     }, [dataP])
-
-    //console.log("DataWeaknessesAndStrengths", DataWeaknessesAndStrengths)
-
-    const handleToggleInfo = () => {
-        setShowMoreInfo(!showMoreInfo); // Cambiar el estado
-    };
 
     const handleCardFlip = () => {
         setIsFlipped(!isFlipped);
@@ -79,7 +72,6 @@ export const PokeGrid = ({Pokemon}) => {
             let dataPoke = {
                 id: dataPokeMain.id,
                 name: dataPokeMain.name,
-                //img: (dataPokeMain.sprites.other.dream_world.front_default == null) ? dataPokeMain.sprites.other.home.front_default : dataPokeMain.sprites.other.dream_world.front_default,
                 img: (dataPokeMain.sprites.other.showdown.front_default == null) ? dataPokeMain.sprites.other.home.front_default : dataPokeMain.sprites.other.showdown.front_default,
                 hp: dataPokeMain.stats[0].base_stat,
                 attack: dataPokeMain.stats[1].base_stat,
@@ -90,7 +82,6 @@ export const PokeGrid = ({Pokemon}) => {
                 typeColor: typeColor[dataPokeMain.types[0].type.name],
                 typeColor2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? typeColor[dataPokeMain.types[1].type.name] : null
             }
-            //alert('se pudo')
             await setData(dataPoke)
             setError(false)
             const notify = () => toast.success(`${dataPokeMain.name} has been captured!`, {

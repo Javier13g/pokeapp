@@ -1,5 +1,5 @@
 {
-  "homepage":"https://Javier13g.github.io/pokeapp" ,
+  "homepage": "https://Javier13g.github.io/pokeapp",
   "name": "poke-app",
   "version": "0.1.0",
   "private": true,
@@ -41,6 +41,7 @@
     ]
   },
   "devDependencies": {
-    "gh-pages": "^6.0.0"
+    "gh-pages": "^6.0.0",
+    "typescript": "^5.3.3"
   }
 }

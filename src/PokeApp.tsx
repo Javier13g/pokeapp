@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import * as React from "react";
+import { useState } from "react";
 import { AddPokemon } from "./components/AddPokemon";
 import { PokeGrid } from "./components/PokeGrid";
 const PokeApp = () => {
 
-    const [pokemons, setPokemons] = useState([])
+    const [pokemons, setPokemons] = useState<string[]>([]);
 
     // function addPoke()
     // {
@@ -21,7 +22,8 @@ const PokeApp = () => {
                         //console.log(poke);
                         return <PokeGrid
                         key={poke} 
-                        Pokemon={poke.toLowerCase()}/>
+                        //Pokemon={poke.toLowerCase()}/>
+                        Pokemon={poke}/>
                     })
                 }
             </ol>

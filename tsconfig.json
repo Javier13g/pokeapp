@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "jsx": "react",
+        "outDir": "./dist",
+        "target": "ES6",
+        "module": "CommonJS",
+        "strict": true
+    },
+    "include": [
+        "src/**/*.ts",
+        "src/**/*.tsx"
+    ],
+    "exclude": [
+        "node_modules"
+    ]
+}

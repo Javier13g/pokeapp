@@ -166,6 +166,7 @@ $input-text-active: #bfd2ff;
 }
 
 #card.flipped {
+  margin-top: 100%;
   transform: rotateY(180deg);
 }
 
@@ -198,5 +199,10 @@ $input-text-active: #bfd2ff;
 
   #card {
     padding: 20px 0px;
+  }
+
+  #card.flipped {
+    margin-top: 0%;
+    transform: rotateY(180deg);
   }
 }

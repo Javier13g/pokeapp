@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useState } from "react";
 
-export const AddPokemon = ({ setPokemons }: { setPokemons: any }) => {
+export const AddPokemon = ({ setPokemons }: { setPokemons: React.Dispatch<React.SetStateAction<string[]>> }) => {
     const [inputValue, setInputValue] = useState('');
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -11,7 +11,7 @@ export const AddPokemon = ({ setPokemons }: { setPokemons: any }) => {
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         if (inputValue.trim().length > 2) {
-            setPokemons((prevPokemons: string[]) => [...prevPokemons, inputValue]);
+            setPokemons([inputValue]); // Sobrescribe la lista con un nuevo Pokémon
             setInputValue('');
         }
     };

@@ -4,8 +4,10 @@ import { useState, useEffect } from "react";
 
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
-export const PokeGrid = ({ Pokemon }: {Pokemon: any}) => {
+export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
+    console.log("pokegrid", Pokemon)
     const [dataP, setData] = useState<PokemonData | null>(null);
     //const [DataWeaknessesAndStrengths, setDataWeaknessesAndStrengths] = useState([]);
 
@@ -22,11 +24,42 @@ export const PokeGrid = ({ Pokemon }: {Pokemon: any}) => {
     useEffect(() => {
         getDataPoke();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [])
+    }, [Pokemon])
 
     useEffect(() => {
+        async function WeaknessesAndStrengths(pokemonData: PokemonData | null) {
+            if (!pokemonData) {
+                // Manejar el caso cuando pokemonData es null
+                return;
+            }
+    
+            const { type } = pokemonData;
+            const url = `https://pokeapi.co/api/v2/type/${type}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            const { damage_relations } = data ?? {};
+            const { double_damage_from } = damage_relations ?? {};
+            const { double_damage_to } = damage_relations ?? {};
+            const { half_damage_from } = damage_relations ?? {};
+            const { half_damage_to } = damage_relations ?? {};
+            const { no_damage_from } = damage_relations ?? {};
+            const { no_damage_to } = damage_relations ?? {};
+    
+            let dataWeaknessesAndStrengths = {
+                doubleDamageFrom: double_damage_from,
+                doubleDamageTo: double_damage_to,
+                halfDamageFrom: half_damage_from,
+                halfDamageTo: half_damage_to,
+                noDamageFrom: no_damage_from,
+                noDamageTo: no_damage_to
+            };
+    
+            setDataWeaknessesAndStrengths(dataWeaknessesAndStrengths);
+        }
+    
         WeaknessesAndStrengths(dataP);
-    }, [dataP])
+    }, [dataP]);
+    
 
     const handleCardFlip = () => {
         setIsFlipped(!isFlipped);
@@ -82,33 +115,17 @@ export const PokeGrid = ({ Pokemon }: {Pokemon: any}) => {
 
     const getDataPoke = async () => {
         const urlMain = `https://pokeapi.co/api/v2/pokemon-species/${Pokemon.toLowerCase()}`;
-        const respMain = await fetch(urlMain);
-        const dataMain = await respMain.json();
-        const { varieties } = dataMain
+        try {
+            const respMain = await axios.get(urlMain);
+        const { varieties } = respMain.data;
 
         const urlDataPokeMain = varieties[0].pokemon.url;
-        const respDataPokeMain = await fetch(urlDataPokeMain);
-        const dataPokeMain = await respDataPokeMain.json();
+        const respDataPokeMain = await axios.get(urlDataPokeMain);
+        const dataPokeMain = respDataPokeMain.data;
 
+        console.log("respmain", respMain.status)
 
-        if (!respDataPokeMain.ok) {
-            const notify = () => toast.error(` Error ${respDataPokeMain.status}!, pokemon not found `, {
-                position: "top-right",
-                autoClose: 10000,
-                hideProgressBar: false,
-                closeOnClick: true,
-                pauseOnHover: true,
-                draggable: true,
-                progress: undefined,
-                theme: "dark",
-            });
-            notify();
-            setError(true)
-            return;
-        } else {
-            //const data = await resp.json();
-            console.log('', dataPokeMain)
-            const dataPoke: PokemonData = {
+            const dataPoke = {
                 id: dataPokeMain.id,
                 name: dataPokeMain.name,
                 img: (dataPokeMain.sprites.other.showdown.front_default == null) ? dataPokeMain.sprites.other.home.front_default : dataPokeMain.sprites.other.showdown.front_default,
@@ -120,9 +137,9 @@ export const PokeGrid = ({ Pokemon }: {Pokemon: any}) => {
                 type2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? dataPokeMain.types[1].type.name : null,
                 typeColor: typeColor[dataPokeMain.types[0].type.name],
                 typeColor2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? typeColor[dataPokeMain.types[1].type.name] : null
-            }
-            await setData(dataPoke)
-            setError(false)
+            };
+            await setData(dataPoke);
+            setError(false);
             const notify = () => toast.success(`${dataPokeMain.name} has been captured!`, {
                 position: "top-right",
                 autoClose: 10000,
@@ -134,15 +151,29 @@ export const PokeGrid = ({ Pokemon }: {Pokemon: any}) => {
                 theme: "dark",
             });
             notify();
+        } catch (error) {
+            console.error("Error occurred:", error);
+            const notify = () => toast.error(`${error}`, {
+                position: "top-right",
+                autoClose: 10000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            notify();
+            setError(true);
         }
-    }
+    };
 
-    async function WeaknessesAndStrengths(pokemonData: PokemonData | null) {
+    /*async function WeaknessesAndStrengths(pokemonData: PokemonData | null) {
         if (!pokemonData) {
             // Manejar el caso cuando pokemonData es null
             return;
         }
-    
+
         const { type } = pokemonData;
         const url = `https://pokeapi.co/api/v2/type/${type}`;
         const resp = await fetch(url);
@@ -154,7 +185,7 @@ export const PokeGrid = ({ Pokemon }: {Pokemon: any}) => {
         const { half_damage_to } = damage_relations ?? {};
         const { no_damage_from } = damage_relations ?? {};
         const { no_damage_to } = damage_relations ?? {};
-    
+
         let dataWeaknessesAndStrengths = {
             doubleDamageFrom: double_damage_from,
             doubleDamageTo: double_damage_to,
@@ -163,10 +194,10 @@ export const PokeGrid = ({ Pokemon }: {Pokemon: any}) => {
             noDamageFrom: no_damage_from,
             noDamageTo: no_damage_to
         };
-    
+
         setDataWeaknessesAndStrengths(dataWeaknessesAndStrengths);
-    }
-    
+    } */
+
 
     if (error) {
         return (<>

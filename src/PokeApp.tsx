@@ -5,8 +5,6 @@ import { PokeGrid } from "./components/PokeGrid";
 
 const PokeApp = () => {
     const [pokemons, setPokemons] = useState<string[]>([]);
-    console.log("const", pokemons)
-
     return (
         <>
             <h2>PokeApp</h2>

@@ -5,11 +5,10 @@ import { useState, useEffect } from "react";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
+import { PokemonData, TypeColor, WeaknessesAndStrengthsData } from "../interfaces/interfaces";
 
 export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
-    console.log("pokegrid", Pokemon)
     const [dataP, setData] = useState<PokemonData | null>(null);
-    //const [DataWeaknessesAndStrengths, setDataWeaknessesAndStrengths] = useState([]);
 
     const [DataWeaknessesAndStrengths, setDataWeaknessesAndStrengths] = useState<WeaknessesAndStrengthsData>({
         doubleDamageFrom: [],
@@ -20,77 +19,8 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
         noDamageTo: []
     });
     const [error, setError] = useState(false);
+
     const [isFlipped, setIsFlipped] = useState(false);
-    useEffect(() => {
-        getDataPoke();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [Pokemon])
-
-    useEffect(() => {
-        async function WeaknessesAndStrengths(pokemonData: PokemonData | null) {
-            if (!pokemonData) {
-                // Manejar el caso cuando pokemonData es null
-                return;
-            }
-    
-            const { type } = pokemonData;
-            const url = `https://pokeapi.co/api/v2/type/${type}`;
-            const resp = await fetch(url);
-            const data = await resp.json();
-            const { damage_relations } = data ?? {};
-            const { double_damage_from } = damage_relations ?? {};
-            const { double_damage_to } = damage_relations ?? {};
-            const { half_damage_from } = damage_relations ?? {};
-            const { half_damage_to } = damage_relations ?? {};
-            const { no_damage_from } = damage_relations ?? {};
-            const { no_damage_to } = damage_relations ?? {};
-    
-            let dataWeaknessesAndStrengths = {
-                doubleDamageFrom: double_damage_from,
-                doubleDamageTo: double_damage_to,
-                halfDamageFrom: half_damage_from,
-                halfDamageTo: half_damage_to,
-                noDamageFrom: no_damage_from,
-                noDamageTo: no_damage_to
-            };
-    
-            setDataWeaknessesAndStrengths(dataWeaknessesAndStrengths);
-        }
-    
-        WeaknessesAndStrengths(dataP);
-    }, [dataP]);
-    
-
-    const handleCardFlip = () => {
-        setIsFlipped(!isFlipped);
-    };
-
-    interface PokemonData {
-        id: number;
-        name: string;
-        img: string;
-        hp: number;
-        attack: number;
-        defense: number;
-        speed: number;
-        type: string;
-        type2: string | null;
-        typeColor: string;
-        typeColor2: string | null;
-    }
-
-    interface WeaknessesAndStrengthsData {
-        doubleDamageFrom: any[];
-        doubleDamageTo: any[];
-        halfDamageFrom: any[];
-        halfDamageTo: any[];
-        noDamageFrom: any[];
-        noDamageTo: any[];
-    }
-
-    interface TypeColor {
-        [key: string]: string;
-    }
 
     const typeColor: TypeColor = {
         bug: "#26de81",
@@ -113,17 +43,63 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
         steel: "#e3e4e5"
     };
 
+    useEffect(() => {
+        getDataPoke();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [Pokemon])
+
+    useEffect(() => {
+        async function WeaknessesAndStrengths(pokemonData: PokemonData | null) {
+            if (!pokemonData) {
+                return;
+            }
+
+            const { type } = pokemonData;
+            const url = `https://pokeapi.co/api/v2/type/${type}`;
+            const resp = await fetch(url);
+            const data = await resp.json();
+            const { damage_relations } = data ?? {};
+            const { double_damage_from } = damage_relations ?? {};
+            const { double_damage_to } = damage_relations ?? {};
+            const { half_damage_from } = damage_relations ?? {};
+            const { half_damage_to } = damage_relations ?? {};
+            const { no_damage_from } = damage_relations ?? {};
+            const { no_damage_to } = damage_relations ?? {};
+
+            let dataWeaknessesAndStrengths = {
+                doubleDamageFrom: double_damage_from,
+                doubleDamageTo: double_damage_to,
+                halfDamageFrom: half_damage_from,
+                halfDamageTo: half_damage_to,
+                noDamageFrom: no_damage_from,
+                noDamageTo: no_damage_to
+            };
+
+            setDataWeaknessesAndStrengths(dataWeaknessesAndStrengths);
+        }
+
+        WeaknessesAndStrengths(dataP);
+    }, [dataP]);
+
+
+    const handleCardFlip = () => {
+        setIsFlipped(!isFlipped);
+    };
+
+    const getTypeColor = (type: string): string => {
+        const lowercaseType = type.toLowerCase();
+        return typeColor[lowercaseType] || '#000000'; // Si el tipo no está definido, devuelve negro
+    };
+
     const getDataPoke = async () => {
         const urlMain = `https://pokeapi.co/api/v2/pokemon-species/${Pokemon.toLowerCase()}`;
         try {
             const respMain = await axios.get(urlMain);
-        const { varieties } = respMain.data;
+            const { varieties } = respMain.data;
 
-        const urlDataPokeMain = varieties[0].pokemon.url;
-        const respDataPokeMain = await axios.get(urlDataPokeMain);
-        const dataPokeMain = respDataPokeMain.data;
-
-        console.log("respmain", respMain.status)
+            const urlDataPokeMain = varieties[0].pokemon.url;
+            const respDataPokeMain = await axios.get(urlDataPokeMain);
+            const dataPokeMain = respDataPokeMain.data;
 
             const dataPoke = {
                 id: dataPokeMain.id,
@@ -135,8 +111,10 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                 speed: dataPokeMain.stats[5].base_stat,
                 type: dataPokeMain.types[0].type.name,
                 type2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? dataPokeMain.types[1].type.name : null,
-                typeColor: typeColor[dataPokeMain.types[0].type.name],
-                typeColor2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? typeColor[dataPokeMain.types[1].type.name] : null
+                //typeColor: typeColor[dataPokeMain.types[0].type.name], getTypeColor
+                typeColor: getTypeColor(dataPokeMain.types[0].type.name),
+                typeColor2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? getTypeColor(dataPokeMain.types[1].type.name): null
+
             };
             await setData(dataPoke);
             setError(false);
@@ -152,7 +130,6 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
             });
             notify();
         } catch (error) {
-            console.error("Error occurred:", error);
             const notify = () => toast.error(`${error}`, {
                 position: "top-right",
                 autoClose: 10000,
@@ -167,37 +144,6 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
             setError(true);
         }
     };
-
-    /*async function WeaknessesAndStrengths(pokemonData: PokemonData | null) {
-        if (!pokemonData) {
-            // Manejar el caso cuando pokemonData es null
-            return;
-        }
-
-        const { type } = pokemonData;
-        const url = `https://pokeapi.co/api/v2/type/${type}`;
-        const resp = await fetch(url);
-        const data = await resp.json();
-        const { damage_relations } = data ?? {};
-        const { double_damage_from } = damage_relations ?? {};
-        const { double_damage_to } = damage_relations ?? {};
-        const { half_damage_from } = damage_relations ?? {};
-        const { half_damage_to } = damage_relations ?? {};
-        const { no_damage_from } = damage_relations ?? {};
-        const { no_damage_to } = damage_relations ?? {};
-
-        let dataWeaknessesAndStrengths = {
-            doubleDamageFrom: double_damage_from,
-            doubleDamageTo: double_damage_to,
-            halfDamageFrom: half_damage_from,
-            halfDamageTo: half_damage_to,
-            noDamageFrom: no_damage_from,
-            noDamageTo: no_damage_to
-        };
-
-        setDataWeaknessesAndStrengths(dataWeaknessesAndStrengths);
-    } */
-
 
     if (error) {
         return (<>
@@ -270,7 +216,7 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                                         <span key={type.name}>
                                             {index > 0 && ' '}
                                             <span style={{
-                                                backgroundColor: typeColor[type.name.toLowerCase()],
+                                                backgroundColor: getTypeColor(type.name.toLowerCase()),
                                                 borderRadius: "20px", padding: "5px 20px", display: "inline-block",
                                                 marginBottom: "5px"
                                             }}>
@@ -287,7 +233,7 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                                         <span key={type.name}>
                                             {index > 0 && ' '}
                                             <span style={{
-                                                backgroundColor: typeColor[type.name.toLowerCase()],
+                                                backgroundColor: getTypeColor(type.name.toLowerCase()),
                                                 borderRadius: "20px", padding: "5px 20px", display: "inline-block",
                                                 marginBottom: "5px"
                                             }}>
@@ -304,7 +250,7 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                                         <span key={type.name}>
                                             {index > 0 && ' '}
                                             <span style={{
-                                                backgroundColor: typeColor[type.name.toLowerCase()],
+                                                backgroundColor: getTypeColor(type.name.toLowerCase()),
                                                 borderRadius: "20px", padding: "5px 20px", display: "inline-block",
                                                 marginBottom: "5px"
                                             }}>
@@ -321,7 +267,7 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                                         <span key={type.name}>
                                             {index > 0 && ' '}
                                             <span style={{
-                                                backgroundColor: typeColor[type.name.toLowerCase()],
+                                                backgroundColor: getTypeColor(type.name.toLowerCase()),
                                                 borderRadius: "20px", padding: "5px 20px", display: "inline-block",
                                                 marginBottom: "5px"
                                             }}>
@@ -338,7 +284,7 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                                         <span key={type.name}>
                                             {index > 0 && ' '}
                                             <span style={{
-                                                backgroundColor: typeColor[type.name.toLowerCase()],
+                                                backgroundColor: getTypeColor(type.name.toLowerCase()),
                                                 borderRadius: "20px", padding: "5px 20px", display: "inline-block",
                                                 marginBottom: "5px"
                                             }}>
@@ -356,7 +302,7 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                                         <span key={type.name}>
                                             {index > 0 && ', '}
                                             <span style={{
-                                                backgroundColor: typeColor[type.name.toLowerCase()],
+                                                backgroundColor: getTypeColor(type.name.toLowerCase()),
                                                 borderRadius: "20px", padding: "5px 20px"
                                             }}>
                                                 {type.name}

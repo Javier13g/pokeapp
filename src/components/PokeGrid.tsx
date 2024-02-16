@@ -1,7 +1,7 @@
 //import React, { useEffect, useState } from "react";
 import * as React from "react";
 import { useState, useEffect } from "react";
-
+import { Link } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
@@ -178,35 +178,42 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                 theme="dark"
             />
             <div id="container">
-                <div id="card" className={isFlipped ? 'flipped' : ''} onClick={handleCardFlip}>
-                    {!isFlipped && (
-                        <div className="card-front">
-                            <p className="hp">
-                                <span>HP: </span>
-                                {dataP?.hp}
-                            </p>
-                            <img src={dataP?.img} alt={`Imagen de ${Pokemon}`} />
-                            <h2 className="poke-name">{Pokemon}</h2>
-                            <div className="types">
-                                <span style={{ backgroundColor: dataP?.typeColor ?? 'transparent' }}>{dataP?.type}</span>
-                                {dataP?.type2 && <span style={{ backgroundColor: dataP?.typeColor2 ?? 'transparent' }}>{dataP?.type2}</span>}
-                            </div>
+                <div id="card" className={isFlipped ? 'flipped' : ''}>
+                    <div>
+                        {!isFlipped && (
+                            <div className="card-front">
+                                <p className="hp">
+                                    <span>HP: </span>
+                                    {dataP?.hp}
+                                </p>
+                                <img src={dataP?.img} alt={`Imagen de ${Pokemon}`} />
+                                <h2 className="poke-name">{Pokemon}</h2>
+                                <div className="types">
+                                    <span style={{ backgroundColor: dataP?.typeColor ?? 'transparent' }}>{dataP?.type}</span>
+                                    {dataP?.type2 && <span style={{ backgroundColor: dataP?.typeColor2 ?? 'transparent' }}>{dataP?.type2}</span>}
+                                </div>
 
-                            <div className="stats">
-                                <div>
-                                    <h3>{dataP?.attack}</h3>
-                                    <p>Attack</p>
+                                <div className="stats">
+                                    <div>
+                                        <h3>{dataP?.attack}</h3>
+                                        <p>Attack</p>
+                                    </div>
+                                    <div>
+                                        <h3>{dataP?.defense}</h3>
+                                        <p>Defense</p>
+                                    </div>
+                                    <div>
+                                        <h3>{dataP?.speed}</h3>
+                                        <p>Speed</p>
+                                    </div>
                                 </div>
                                 <div>
-                                    <h3>{dataP?.defense}</h3>
-                                    <p>Defense</p>
+                                    <button onClick={() => setIsFlipped(!isFlipped)}>Hola</button>
+                                    <button onClick={() => handleCardFlip()}>Voltear</button>
                                 </div>
-                                <div>
-                                    <h3>{dataP?.speed}</h3>
-                                    <p>Speed</p>
-                                </div>
-                            </div>
-                        </div>)}
+                            </div>)}
+                    </div>
+
                     {isFlipped && (
                         <div className="card-back">
                             <div>
@@ -311,7 +318,10 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                                     ))}
                                 </span>
                             </div>
-
+                            <div>
+                                <button>Hola</button>
+                                <button onClick={() => handleCardFlip()}>Voltear</button>
+                            </div>
                         </div>
                     )}
                 </div>

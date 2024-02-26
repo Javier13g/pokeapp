@@ -6,6 +6,7 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import { PokemonData, TypeColor, WeaknessesAndStrengthsData } from "../interfaces/interfaces";
+import { Button } from "@mui/material";
 
 export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
     const [dataP, setData] = useState<PokemonData | null>(null);
@@ -21,6 +22,9 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
     const [error, setError] = useState(false);
 
     const [isFlipped, setIsFlipped] = useState(false);
+
+    const [pokeMoves, setPokeMoves] = useState([]);
+    console.log("set", pokeMoves)
 
     const typeColor: TypeColor = {
         bug: "#26de81",
@@ -113,10 +117,12 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                 type2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? dataPokeMain.types[1].type.name : null,
                 //typeColor: typeColor[dataPokeMain.types[0].type.name], getTypeColor
                 typeColor: getTypeColor(dataPokeMain.types[0].type.name),
-                typeColor2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? getTypeColor(dataPokeMain.types[1].type.name): null
+                typeColor2: (dataPokeMain.types[1] && dataPokeMain.types[1].type.name) ? getTypeColor(dataPokeMain.types[1].type.name) : null
 
             };
             await setData(dataPoke);
+            await setPokeMoves(dataPokeMain.moves)
+
             setError(false);
             const notify = () => toast.success(`${dataPokeMain.name} has been captured!`, {
                 position: "top-right",
@@ -208,8 +214,11 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                                     </div>
                                 </div>
                                 <div>
-                                    <button onClick={() => setIsFlipped(!isFlipped)}>Hola</button>
-                                    <button onClick={() => handleCardFlip()}>Voltear</button>
+                                    <Button variant="contained" sx={{ marginRight: '10px' }}>
+                                        <Link to={"/pokeapp/pokemonmoves"} state={{ pokeMoves: pokeMoves }} style={{ color: 'white' }}>Moves</Link>
+                                    </Button>
+                                    {/* <button onClick={() => handleCardFlip()}>Voltear</button> */}
+                                    <Button variant="contained" onClick={() => handleCardFlip()}>Flip</Button>
                                 </div>
                             </div>)}
                     </div>
@@ -319,8 +328,11 @@ export const PokeGrid = ({ Pokemon }: { Pokemon: any }) => {
                                 </span>
                             </div>
                             <div>
-                                <button>Hola</button>
-                                <button onClick={() => handleCardFlip()}>Voltear</button>
+                                <Button variant="contained" sx={{ marginRight: '10px' }}>
+                                    <Link to={"/pokeapp/pokemonmoves"} state={{ pokeMoves: pokeMoves }} style={{ color: 'white' }}>Moves</Link>
+                                </Button>
+                                {/* <button onClick={() => handleCardFlip()}>Voltear</button> */}
+                                <Button variant="contained" onClick={() => handleCardFlip()}>Flip</Button>
                             </div>
                         </div>
                     )}

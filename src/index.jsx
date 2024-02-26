@@ -8,14 +8,26 @@ import {
     RouterProvider,
 } from "react-router-dom";
 import ErrorPage from './ErrorPage'
+import PokemonMoves from './components/PokemonMoves'
 
 const router = createBrowserRouter([
     {
         path: "pokeapp/search",
         element: <PokeApp />,
         errorElement: <ErrorPage />,
+        // children: [
+        //     {
+        //         path: "pokemonmoves",
+        //         element: <PokemonMoves />,
+        //     }
+        // ]
     },
-    ]);
+    {
+        path: "pokeapp/pokemonmoves",
+        element: <PokemonMoves />,
+        errorElement: <ErrorPage />,
+    },
+]);
 
 const root = createRoot(document.getElementById('root'));
 root.render(
